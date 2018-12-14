@@ -83,30 +83,20 @@ d3.csv("assets/data/data.csv").then(function(hairData) {
   .attr("fill", "blue")
   .attr("opacity", ".5");
 
-  chart.selectAll("text")
-  .data(dataset)
-  .enter()
-  .append("text")
-  .text(function (d) {
-      return d.locationAbbr;
-  })
-  .attr("x", function (d) {
-      return xScale(d[defaultAxisLabelX]);
-  })
-  .attr("y", function (d) {
-      return yScale(d[defaultAxisLabelY]);
-  })
-  .attr("font-size", "12px")
-  .attr("text-anchor", "middle")
-  .attr("class","stateText")
+  
 
   // Step 6: Initialize tool tip
   // ==============================
   var toolTip = d3.tip()
     .attr("class", "tooltip")
     .offset([80, -60])
-    .html(function(d) {
-      return (`${d.state}<br>Poverty: ${d.poverty}<br>Healthcare: ${d.healthcare}`);
+    .html(function(data) {
+        var stateName = data.state;
+        var pov = +data.poverty;
+        var physAct = +data.phys_act;
+        return (
+            d.abbr + '<br> Poverty: ' + d.poverty + '% <br> Healthcare: ' + d.healthcare +'%'
+        );
     });
 
   // Step 7: Create tooltip in the chart
@@ -123,6 +113,22 @@ d3.csv("assets/data/data.csv").then(function(hairData) {
       toolTip.hide(data);
     });
 
+chartGroup.append("text")
+    .style("text-anchor", "middle")
+    .style("font-size", "12px")
+    .selectAll("tspan")
+    .data(hairData)
+    .enter()
+    .append("tspan")
+        .attr("x", function(data) {
+            return xLinearScale(data.poverty - 0);
+        })
+        .attr("y", function(data) {
+            return yLinearScale(data.healthcare - 0.2);
+        })
+        .text(function(data) {
+            return data.abbr
+        });
   // Create axes labels
   chartGroup.append("text")
     .attr("transform", "rotate(-90)")
