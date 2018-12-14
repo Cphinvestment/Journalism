@@ -25,8 +25,8 @@ var chartGroup = svg.append("g")
   .attr("transform", `translate(${margin.left}, ${margin.top})`);
 
 // Import Data
-d3.csv("data/data.csv", function(err, hairData) {
-  if (err) throw err;
+d3.csv("assets/data/data.csv").then(function(hairData) {
+//   if (err) throw err;
 
   // Step 1: Parse Data/Cast as numbers
    // ==============================
@@ -50,7 +50,7 @@ d3.csv("data/data.csv", function(err, hairData) {
   // Step 2: Create scale functions
   // ==============================
   var xLinearScale = d3.scaleLinear()
-    .domain([20, d3.max(hairData, d => d.poverty)])
+    .domain([8, d3.max(hairData, d => d.poverty)])
     .range([0, width]);
 
   var yLinearScale = d3.scaleLinear()
@@ -77,11 +77,28 @@ d3.csv("data/data.csv", function(err, hairData) {
   .data(hairData)
   .enter()
   .append("circle")
-  .attr("cx", d => xLinearScale(d.hair_length))
-  .attr("cy", d => yLinearScale(d.num_hits))
+  .attr("cx", d => xLinearScale(d.poverty))
+  .attr("cy", d => yLinearScale(d.healthcare))
   .attr("r", "15")
-  .attr("fill", "pink")
+  .attr("fill", "blue")
   .attr("opacity", ".5");
+
+  chart.selectAll("text")
+  .data(dataset)
+  .enter()
+  .append("text")
+  .text(function (d) {
+      return d.locationAbbr;
+  })
+  .attr("x", function (d) {
+      return xScale(d[defaultAxisLabelX]);
+  })
+  .attr("y", function (d) {
+      return yScale(d[defaultAxisLabelY]);
+  })
+  .attr("font-size", "12px")
+  .attr("text-anchor", "middle")
+  .attr("class","stateText")
 
   // Step 6: Initialize tool tip
   // ==============================
@@ -89,7 +106,7 @@ d3.csv("data/data.csv", function(err, hairData) {
     .attr("class", "tooltip")
     .offset([80, -60])
     .html(function(d) {
-      return (`${d.rockband}<br>Hair length: ${d.hair_length}<br>Hits: ${d.num_hits}`);
+      return (`${d.state}<br>Poverty: ${d.poverty}<br>Healthcare: ${d.healthcare}`);
     });
 
   // Step 7: Create tooltip in the chart
