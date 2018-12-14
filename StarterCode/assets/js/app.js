@@ -93,9 +93,9 @@ d3.csv("assets/data/data.csv").then(function(hairData) {
     .html(function(data) {
         var stateName = data.state;
         var pov = +data.poverty;
-        var physAct = +data.phys_act;
+        var healthcare = +data.healthcare;
         return (
-            d.abbr + '<br> Poverty: ' + d.poverty + '% <br> Healthcare: ' + d.healthcare +'%'
+            stateName + '<br> Poverty: ' + d.poverty + '% <br> Healthcare: ' + d.healthcare +'%'
         );
     });
 
