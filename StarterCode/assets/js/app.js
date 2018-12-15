@@ -31,8 +31,8 @@ d3.csv("assets/data/data.csv").then(function(hairData) {
   // Step 1: Parse Data/Cast as numbers
    // ==============================
   hairData.forEach(function(data) {
-    data.state = +data.state;
-    data.abbr = +data.abbr;
+    data.state = data.state;
+    data.abbr = data.abbr;
     data.poverty = +data.poverty;
     data.povertyMoe = +data.povertyMoe;
     data.age = +data.age;
@@ -73,15 +73,15 @@ d3.csv("assets/data/data.csv").then(function(hairData) {
 
    // Step 5: Create Circles
   // ==============================
-  var circlesGroup = chartGroup.selectAll("circle")
-  .data(hairData)
-  .enter()
-  .append("circle")
-  .attr("cx", d => xLinearScale(d.poverty))
-  .attr("cy", d => yLinearScale(d.healthcare))
-  .attr("r", "15")
-  .attr("fill", "blue")
-  .attr("opacity", ".5");
+//   var circlesGroup = chartGroup.selectAll("circle")
+//   .data(hairData)
+//   .enter()
+//   .append("circle")
+//   .attr("cx", d => xLinearScale(d.poverty))
+//   .attr("cy", d => yLinearScale(d.healthcare))
+//   .attr("r", "15")
+//   .attr("fill", "blue")
+//   .attr("opacity", ".5");
 
   
 
@@ -91,9 +91,9 @@ d3.csv("assets/data/data.csv").then(function(hairData) {
     .attr("class", "tooltip")
     .offset([80, -60])
     .html(function(data) {
-        var stateName = data.state;
-        var pov = +data.poverty;
-        var healthcare = +data.healthcare;
+        var stateName = d.abbr;
+        var pov = +d.poverty;
+        var healthcare = +d.healthcare;
         return (
             stateName + '<br> Poverty: ' + d.poverty + '% <br> Healthcare: ' + d.healthcare +'%'
         );
@@ -105,13 +105,33 @@ d3.csv("assets/data/data.csv").then(function(hairData) {
 
   // Step 8: Create event listeners to display and hide the tooltip
   // ==============================
-  circlesGroup.on("click", function(data) {
-    toolTip.show(data);
-  })
+//   circlesGroup.on("click", function(data) {
+//     toolTip.show(data);
+//   })
     // onmouseout event
-    .on("mouseout", function(data, index) {
-      toolTip.hide(data);
-    });
+    // .on("mouseout", function(data, index) {
+    //   toolTip.hide(data);
+    // });
+    chartGroup.selectAll("circle")
+        .data(hairData)
+        .enter()
+        .append("circle")
+        .attr("cx", function(data, index) {
+            return xLinearScale(data.poverty)
+        })
+        .attr("cy", function(data, index) {
+            return yLinearScale(data.healthcare)
+        })
+        .attr("r", "15")
+        .attr("fill", "lightblue")
+        // display tooltip on click
+        .on("mouseenter", function(data) {
+            toolTip.show(data);
+        })
+        // hide tooltip on mouseout
+        .on("mouseout", function(data, index) {
+            toolTip.hide(data);
+        });
 
 chartGroup.append("text")
     .style("text-anchor", "middle")
